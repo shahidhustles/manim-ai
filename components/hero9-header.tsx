@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { useScroll, motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 
 const menuItems = [
   { name: "Features", href: "#link" },
@@ -19,6 +19,7 @@ export const HeroHeader = () => {
   const [menuState, setMenuState] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
   const { scrollYProgress } = useScroll();
+  const { isSignedIn } = useUser();
 
   React.useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
@@ -96,16 +97,24 @@ export const HeroHeader = () => {
                 </ul>
               </div>
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                <Button asChild variant="outline" size="sm">
-                  <SignInButton mode="modal">
-                    <span>Login</span>
-                  </SignInButton>
-                </Button>
-                <Button asChild size="sm">
-                  <SignUpButton mode="modal">
-                    <span>Sign Up</span>
-                  </SignUpButton>
-                </Button>
+                {isSignedIn ? (
+                  <>
+                    <UserButton />
+                  </>
+                ) : (
+                  <>
+                    <Button asChild variant="outline" size="sm">
+                      <SignInButton mode="modal">
+                        <span>Login</span>
+                      </SignInButton>
+                    </Button>
+                    <Button asChild size="sm">
+                      <SignUpButton mode="modal">
+                        <span>Sign Up</span>
+                      </SignUpButton>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
