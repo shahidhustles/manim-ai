@@ -33,10 +33,8 @@ const ChatPage = () => {
   ) => {
     if (!messageContent.trim() && !image) return;
 
-    // Generate a unique ID for the new message
     const messageId = Date.now().toString();
 
-    // Add user message to the chat
     const newUserMessage: Message = {
       id: messageId,
       content: messageContent,
@@ -47,22 +45,41 @@ const ChatPage = () => {
     setIsLoading(true);
 
     try {
-      // Here you would normally send the message to the API
-      // For now, we'll just simulate a response after a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: messageContent }),
+      });
 
-      // Simulate a response
-      const responseMessage: Message = {
+      if (!res.ok) {
+        throw new Error(`API responded with status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("API response received:", data);
+
+      // // For now, just show a placeholder response
+      // const responseMessage: Message = {
+      //   id: (Date.now() + 1).toString(),
+      //   content: "Processing your request...",
+      //   type: "assistant",
+      // };
+
+      // setMessages((prev) => [...prev, responseMessage]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+
+      // Add an error message to the chat
+      const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         content:
-          "This is a simulated response. You would typically handle API communication here.",
+          "Sorry, there was an error processing your request. Please try again.",
         type: "assistant",
       };
 
-      setMessages((prev) => [...prev, responseMessage]);
-    } catch (error) {
-      console.error("Error sending message:", error);
-      // Handle error - perhaps add an error message to the chat
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }

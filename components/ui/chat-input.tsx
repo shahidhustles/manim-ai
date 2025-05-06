@@ -143,8 +143,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
           accept="image/*"
           onChange={handleFileSelect}
         />
-        <Button type="submit" className="rounded-full px-4">
-          Send Message
+        <Button type="submit" className="rounded-full px-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
