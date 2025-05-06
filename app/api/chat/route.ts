@@ -60,7 +60,7 @@ Frame 4: Graphical representation of roots and discriminant`,
                   "The prompt required to write the code only for that respective frame."
                 ),
             })
-          ),
+          ), // Remove the length constraint to avoid validation errors
           system: `You are an expert manim animation programmer breaking down complex visualizations into clear, sequential frame instructions. Each frame instruction should use precise manim terminology, LaTeX notation, and specific animation classes.
 
 Focus on technical details that will help the next model generate accurate manim code, including:
@@ -71,10 +71,14 @@ Focus on technical details that will help the next model generate accurate manim
 - Camera movements and zooming
 - Duration and timing details
 
-Note: A frame in this context represents a distinct visual state or "slide" in the animation - the maximum amount of visual elements and animations that logically belong together in one conceptual step of the explanation. Each frame should contain a complete set of instructions for creating that specific segment of the animation.`,
-          prompt: `Break down the following animation into ${frames} sequential frames with specific manim coding instructions for each:
+Note: A frame in this context represents a distinct visual state or "slide" in the animation - the maximum amount of visual elements and animations that logically belong together in one conceptual step of the explanation. Each frame should contain a complete set of instructions for creating that specific segment of the animation.
+
+IMPORTANT: You MUST generate EXACTLY ${frames} separate frame prompts as requested.`,
+          prompt: `Break down the following animation into EXACTLY ${frames} sequential frames with specific manim coding instructions for each:
 
 ${refinedPrompt}
+
+I need EXACTLY ${frames} separate frame prompts, no more and no less. Return an array with ${frames} items.
 
 For example, if creating a quadratic equation animation with 5 frames:
 
@@ -94,17 +98,22 @@ Frame 5: "Create a NumberPlane and plot three examples of quadratic functions wi
         );
 
         const resLinks: string[] = [];
-        const generatePromises = framePrompts.map(async (frame, index) => {
+        // Replace parallel processing with sequential processing
+        for (let index = 0; index < framePrompts.length; index++) {
+          const frame = framePrompts[index];
           try {
             console.log(
               `🎬 Processing frame ${index + 1}/${framePrompts.length}`
             );
-            const res = await fetch("/api/generate", {
-              method: "POST",
-              body: JSON.stringify({
-                prompt: frame.prompt,
-              }),
-            });
+            const res = await fetch(
+              "https://manim-ai.vercel.app/api/generate",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  prompt: frame.prompt,
+                }),
+              }
+            );
 
             if (!res.ok) {
               throw new Error(
@@ -114,17 +123,21 @@ Frame 5: "Create a NumberPlane and plot three examples of quadratic functions wi
 
             const data = await res.json();
             console.log(`✅ Frame ${index + 1} processed successfully`);
-            return data.url || null;
+            
+            if (data.url) {
+              resLinks.push(data.url);
+              console.log(`🔗 Added frame ${index + 1} link: ${data.url.substring(0, 50)}...`);
+            }
+            
+            // Add 1 second delay before processing the next frame (except for the last frame)
+            if (index < framePrompts.length) {
+              console.log(`⏱️ Waiting 1 second before processing next frame...`);
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
           } catch (error) {
             console.error(`❌ Error processing frame ${index + 1}:`, error);
-            return null;
           }
-        });
-
-        const results = await Promise.all(generatePromises);
-        results.forEach((url) => {
-          if (url) resLinks.push(url);
-        });
+        }
 
         console.log(`🔗 Generated ${resLinks.length} video links`);
         return NextResponse.json({ links: resLinks });
