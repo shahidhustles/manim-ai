@@ -3,7 +3,7 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import { NextResponse } from "next/server";
 
-export const google = createGoogleGenerativeAI({
+const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
