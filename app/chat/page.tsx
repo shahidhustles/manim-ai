@@ -1,29 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { isCloudinaryVideoUrl } from "@/lib/isCloudinaryVideoURL";
 import { ChatInput } from "@/components/ui/chat-input";
 
 interface Message {
   id: string;
   content: string;
   type: "user" | "assistant";
-  isVideo?: boolean;
+  mergedVideo?: string;
 }
 
 const ChatPage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const MessageContent = ({ content }: { content: string }) => {
-    if (isCloudinaryVideoUrl(content.trim())) {
+  const [mergedVideo, setMergedVideo] = useState("");
+  const MessageContent = ({
+    content,
+  }: {
+    content: string;
+    message?: Message;
+  }) => {
+    // If it's a merged video, show only that without relying on validation
+    if (mergedVideo) {
+      console.log("Displaying video with URL:", mergedVideo);
       return (
-        <video controls width="100%" className="rounded-md">
-          <source src={content.trim()} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <div className="space-y-1">
+          <video controls width="100%" className="rounded-md">
+            <source src={mergedVideo} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
       );
     }
+
+    // For regular text messages
     return <p className="whitespace-pre-wrap">{content}</p>;
   };
 
@@ -58,16 +68,8 @@ const ChatPage = () => {
       }
 
       const data = await res.json();
+      setMergedVideo(data.url);
       console.log("API response received:", data);
-
-      // // For now, just show a placeholder response
-      // const responseMessage: Message = {
-      //   id: (Date.now() + 1).toString(),
-      //   content: "Processing your request...",
-      //   type: "assistant",
-      // };
-
-      // setMessages((prev) => [...prev, responseMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
 
@@ -110,7 +112,7 @@ const ChatPage = () => {
                       : "bg-muted"
                   }`}
                 >
-                  <MessageContent content={message.content} />
+                  <MessageContent content={message.content} message={message} />
                 </div>
               </div>
             ))

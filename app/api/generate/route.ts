@@ -45,7 +45,7 @@ class MathAnimation(Scene):
     return formattedCode;
   } catch (error) {
     console.error("🔧 Error formatting code:", error);
-    return rawCode; 
+    return rawCode;
   }
 }
 
@@ -53,28 +53,31 @@ export async function POST(req: Request) {
   try {
     console.log("🎨 Starting code generation");
     const { prompt } = await req.json();
-    console.log(`📋 Processing frame prompt: "${prompt.substring(0, 50)}..."`);
+    console.log(`📋 Processing prompt: "${prompt.substring(0, 50)}..."`);
 
     try {
       const { text: rawCode } = await generateText({
         model: google("gemini-2.0-flash-001"),
         prompt: `${prompt}`,
-        system: `You are an expert Manim developer specializing in creating mathematical animations with beautiful visual effects. Your task is to transform the provided frame prompt into complete, executable manim code.
+        system: `You are an expert Manim developer specializing in creating mathematical animations with beautiful visual effects. Your task is to transform the provided prompt into complete, executable manim code that creates a cohesive animation lasting at least 20 seconds.
 
 Your code must be:
 1. Fully functional with proper imports and class structure
 2. Visually appealing with thoughtful color schemes and aesthetics
 3. Well-organized with proper object placement and alignment to avoid overlaps
-4. Appropriately paced with smooth transitions and proper timing
+4. Appropriately paced with smooth transitions and proper timing (ensure total animation time is AT LEAST 20 seconds)
 5. Detailed with comments explaining key animation techniques
 
-Guidelines for high-quality animations:
+Guidelines for high-quality, longer animations:
+- Add sufficient wait times between animations to ensure a minimum 20-second duration
 - Use color gradients, glows, and highlights to emphasize important elements
 - Apply proper spacing and alignment between mathematical objects
 - Implement smooth entry and exit animations (FadeIn/Out, Transform, Create)
 - Use camera techniques (zooming, panning) when appropriate for focus
 - Add visual aids like arrows, brackets, or background shading to guide attention
 - Balance visual complexity - make it beautiful but clear and understandable
+- Create multiple scenes or segments that flow together logically
+- Include detailed explanations with text elements where appropriate
 
 IMPORTANT: Return ONLY the Python code as plain text. DO NOT wrap it in markdown code blocks or add any additional formatting tags like \`\`\`python or \`\`\`. Just provide clean, executable Python code that starts with imports and ends with the final line of the class.`,
       });
