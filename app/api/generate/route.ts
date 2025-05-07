@@ -69,7 +69,7 @@ Your code must be:
 5. Detailed with comments explaining key animation techniques
 
 Guidelines for high-quality, longer animations:
-- Add sufficient wait times between animations to ensure a minimum 20-second duration
+- Add sufficient wait times between animations to ensure a descriptive video
 - Use color gradients, glows, and highlights to emphasize important elements
 - Apply proper spacing and alignment between mathematical objects
 - Implement smooth entry and exit animations (FadeIn/Out, Transform, Create)

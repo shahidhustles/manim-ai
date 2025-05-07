@@ -29,41 +29,9 @@ export async function POST(req: Request) {
           2. Introduce equation form ax² + bx + c = 0
           3. Show step-by-step solutions with quadratic formula
           4. Plot parabolas with changing coefficients (a, b, c)
-          5. Demonstrate specific example x² - 5x
-
-        Example:
-        User input: "explain quadratic equation"
-        Refined output: "Create an animation explaining the quadratic equation and its solutions. The animation should follow these steps:
-        
-        1. Start with a title 'Understanding Quadratic Equations' using Text with a nice color gradient and fade it in slowly.
-        
-        2. Introduce the standard form of the equation using MathTex: ax² + bx + c = 0 with scale=1.5, positioned at the top of the screen.
-        
-        3. Create three colored coefficients a, b, and c with different colors (RED, GREEN, BLUE) and animate them sliding into position.
-        
-        4. Show the step-by-step solution process:
-           - First, move all terms to one side: ax² + bx + c = 0
-           - Then, show the quadratic formula: x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}
-           - Highlight the discriminant (b²-4ac) and explain its significance for determining the number of roots
-        
-        5. Create an Axes object and plot a parabola using the function f(x) = ax² + bx + c with initial values a=1, b=0, c=-1.
-        
-        6. Animate how changing coefficients affects the graph:
-           - Change 'a' to show how it affects the width/direction of the parabola (spend 3 seconds)
-           - Change 'b' to show how it shifts the parabola horizontally (spend 3 seconds)
-           - Change 'c' to show how it shifts the parabola vertically (spend 3 seconds)
-        
-        7. Demonstrate solving a specific example: x² - 5x + 6 = 0
-           - Apply the quadratic formula step by step with calculations appearing on screen
-           - Show that x = 2 and x = 3 are solutions
-           - Plot these points on the graph and highlight them with circles
-        
-        8. Conclude by showing three different cases of discriminant:
-           - Positive discriminant: two real solutions (e.g., x² - 5x + 6 = 0)
-           - Zero discriminant: one real solution (e.g., x² - 4x + 4 = 0) 
-           - Negative discriminant: no real solutions (e.g., x² + x + 1 = 0)
-           
-        Ensure smooth transitions between each step and use consistent color coding throughout. Add appropriate wait times between animations to allow viewers to absorb the information, ensuring the total animation lasts at least 20 seconds."`,
+          5. Demonstrate specific example x² - 5x + 6 = 0
+          6. Show different discriminant cases
+          Use smooth transitions and consistent colors throughout."`,
         schema: z.object({
           refinedPrompt: z.string().describe("Refined Prompt"),
         }),
